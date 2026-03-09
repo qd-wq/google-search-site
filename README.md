@@ -1,6 +1,12 @@
-# GitHub Google Search Site
+# GitHub Multi-Engine Search Site
 
-一个可部署到 GitHub Pages 的静态网站，支持通过表单跳转到 Google 搜索结果页。
+一个可部署到 GitHub Pages 的静态网站，支持 Google、Bing、百度搜索切换。
+
+## 功能
+
+- 选择搜索引擎：Google / Bing / 百度
+- 输入关键词后在新标签页打开搜索结果
+- 自适应移动端
 
 ## 本地预览
 
@@ -12,12 +18,9 @@
 2. 把本目录文件推送到仓库：
 
 ```bash
-git init
 git add .
-git commit -m "init google search site"
-git branch -M main
-git remote add origin git@github.com:<你的用户名>/google-search-site.git
-git push -u origin main
+git commit -m "feat: add multi-engine search"
+git push
 ```
 
 3. 打开仓库 `Settings` -> `Pages`。

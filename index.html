@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Google Search Site</title>
+  <title>Search Site</title>
   <style>
     :root {
       --bg: #f7f9fc;
@@ -49,10 +49,11 @@
 
     form {
       display: grid;
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 180px 1fr auto;
       gap: 10px;
     }
 
+    select,
     input[type="search"] {
       width: 100%;
       font-size: 1rem;
@@ -62,6 +63,7 @@
       outline: none;
     }
 
+    select:focus,
     input[type="search"]:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
@@ -93,21 +95,49 @@
 </head>
 <body>
   <main class="card">
-    <h1>Google 搜索站点</h1>
-    <p>输入关键词并跳转到 Google 搜索结果页。</p>
+    <h1>多引擎搜索站点</h1>
+    <p>选择搜索引擎并输入关键词，在新标签页打开结果。</p>
 
-    <form action="https://www.google.com/search" method="get" target="_blank" rel="noopener noreferrer">
+    <form id="search-form">
+      <select id="engine" aria-label="选择搜索引擎">
+        <option value="google">Google</option>
+        <option value="bing">Bing</option>
+        <option value="baidu">百度</option>
+      </select>
       <input
         type="search"
-        name="q"
+        id="query"
         placeholder="例如：GitHub Pages 教程"
         required
         autocomplete="off"
       />
-      <button type="submit">Google 搜索</button>
+      <button type="submit">开始搜索</button>
     </form>
 
-    <div class="tip">提示：结果会在新标签页打开。</div>
+    <div class="tip">提示：Google 和 Bing 使用参数 q，百度使用参数 wd。</div>
   </main>
+
+  <script>
+    const form = document.getElementById("search-form");
+    const engineSelect = document.getElementById("engine");
+    const queryInput = document.getElementById("query");
+
+    const engines = {
+      google: { url: "https://www.google.com/search", param: "q" },
+      bing: { url: "https://www.bing.com/search", param: "q" },
+      baidu: { url: "https://www.baidu.com/s", param: "wd" }
+    };
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const query = queryInput.value.trim();
+      if (!query) return;
+
+      const engine = engines[engineSelect.value] || engines.google;
+      const url = new URL(engine.url);
+      url.searchParams.set(engine.param, query);
+      window.open(url.toString(), "_blank", "noopener");
+    });
+  </script>
 </body>
 </html>
