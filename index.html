@@ -29,7 +29,7 @@
     }
 
     .card {
-      width: min(720px, 100%);
+      width: min(1200px, 100%);
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 16px;
@@ -49,11 +49,11 @@
 
     form {
       display: grid;
-      grid-template-columns: 180px 1fr auto;
+      grid-template-columns: 1fr auto;
       gap: 10px;
+      margin-bottom: 16px;
     }
 
-    select,
     input[type="search"] {
       width: 100%;
       font-size: 1rem;
@@ -63,7 +63,6 @@
       outline: none;
     }
 
-    select:focus,
     input[type="search"]:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
@@ -82,28 +81,80 @@
     button:hover { background: var(--accent-hover); }
 
     .tip {
-      margin-top: 12px;
+      margin-top: 4px;
       color: var(--muted);
       font-size: 0.92rem;
+    }
+
+    .results {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .column {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      min-height: 520px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .column-head {
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: #f8fbff;
+      gap: 8px;
+    }
+
+    .column-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .open-link {
+      font-size: 0.85rem;
+      color: var(--accent);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .open-link:hover {
+      text-decoration: underline;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 480px;
+      border: 0;
+      background: #fff;
     }
 
     @media (max-width: 560px) {
       form { grid-template-columns: 1fr; }
       button { min-height: 44px; }
     }
+
+    @media (max-width: 1000px) {
+      .results { grid-template-columns: 1fr; }
+      .column { min-height: 420px; }
+      iframe { min-height: 380px; }
+    }
   </style>
 </head>
 <body>
   <main class="card">
     <h1>多引擎搜索站点</h1>
-    <p>选择搜索引擎并输入关键词，在新标签页打开结果。</p>
+    <p>输入关键词后，同时展示 Google、Bing、百度结果用于对比。</p>
 
     <form id="search-form">
-      <select id="engine" aria-label="选择搜索引擎">
-        <option value="google">Google</option>
-        <option value="bing">Bing</option>
-        <option value="baidu">百度</option>
-      </select>
       <input
         type="search"
         id="query"
@@ -114,29 +165,70 @@
       <button type="submit">开始搜索</button>
     </form>
 
-    <div class="tip">提示：Google 和 Bing 使用参数 q，百度使用参数 wd。</div>
+    <div class="tip">提示：若浏览器阻止站内嵌入结果，请点击每列右上角“新标签打开”。</div>
+
+    <section class="results" id="results" hidden>
+      <article class="column">
+        <div class="column-head">
+          <div class="column-title">Google</div>
+          <a class="open-link" id="google-link" href="#" target="_blank" rel="noopener noreferrer">新标签打开</a>
+        </div>
+        <iframe id="google-frame" title="Google 搜索结果"></iframe>
+      </article>
+
+      <article class="column">
+        <div class="column-head">
+          <div class="column-title">Bing</div>
+          <a class="open-link" id="bing-link" href="#" target="_blank" rel="noopener noreferrer">新标签打开</a>
+        </div>
+        <iframe id="bing-frame" title="Bing 搜索结果"></iframe>
+      </article>
+
+      <article class="column">
+        <div class="column-head">
+          <div class="column-title">百度</div>
+          <a class="open-link" id="baidu-link" href="#" target="_blank" rel="noopener noreferrer">新标签打开</a>
+        </div>
+        <iframe id="baidu-frame" title="百度搜索结果"></iframe>
+      </article>
+    </section>
   </main>
 
   <script>
     const form = document.getElementById("search-form");
-    const engineSelect = document.getElementById("engine");
     const queryInput = document.getElementById("query");
+    const results = document.getElementById("results");
+    const googleFrame = document.getElementById("google-frame");
+    const bingFrame = document.getElementById("bing-frame");
+    const baiduFrame = document.getElementById("baidu-frame");
+    const googleLink = document.getElementById("google-link");
+    const bingLink = document.getElementById("bing-link");
+    const baiduLink = document.getElementById("baidu-link");
 
-    const engines = {
-      google: { url: "https://www.google.com/search", param: "q" },
-      bing: { url: "https://www.bing.com/search", param: "q" },
-      baidu: { url: "https://www.baidu.com/s", param: "wd" }
-    };
+    function buildUrl(base, param, query) {
+      const url = new URL(base);
+      url.searchParams.set(param, query);
+      return url.toString();
+    }
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       const query = queryInput.value.trim();
       if (!query) return;
 
-      const engine = engines[engineSelect.value] || engines.google;
-      const url = new URL(engine.url);
-      url.searchParams.set(engine.param, query);
-      window.open(url.toString(), "_blank", "noopener");
+      const googleUrl = buildUrl("https://www.google.com/search", "q", query);
+      const bingUrl = buildUrl("https://www.bing.com/search", "q", query);
+      const baiduUrl = buildUrl("https://www.baidu.com/s", "wd", query);
+
+      googleFrame.src = googleUrl;
+      bingFrame.src = bingUrl;
+      baiduFrame.src = baiduUrl;
+
+      googleLink.href = googleUrl;
+      bingLink.href = bingUrl;
+      baiduLink.href = baiduUrl;
+
+      results.hidden = false;
     });
   </script>
 </body>

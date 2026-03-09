@@ -1,11 +1,12 @@
 # GitHub Multi-Engine Search Site
 
-一个可部署到 GitHub Pages 的静态网站，支持 Google、Bing、百度搜索切换。
+一个可部署到 GitHub Pages 的静态网站，支持 Google、Bing、百度三列对比搜索。
 
 ## 功能
 
-- 选择搜索引擎：Google / Bing / 百度
-- 输入关键词后在新标签页打开搜索结果
+- 点击一次“开始搜索”同时加载 Google / Bing / 百度结果
+- 结果按三列展示，便于对比
+- 每列提供“新标签打开”兜底链接（当站内嵌入受限时）
 - 自适应移动端
 
 ## 本地预览
