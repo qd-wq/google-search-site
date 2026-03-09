@@ -1,0 +1,14 @@
+name = "ai-compare-proxy"
+main = "index.js"
+compatibility_date = "2025-01-01"
+
+# Deploy after setting secrets:
+# wrangler secret put OPENAI_API_KEY
+# wrangler secret put GEMINI_API_KEY
+# wrangler secret put ANTHROPIC_API_KEY
+
+[vars]
+ALLOWED_ORIGIN = "https://qd-wq.github.io"
+OPENAI_MODEL = "gpt-4o-mini"
+GEMINI_MODEL = "gemini-2.0-flash"
+CLAUDE_MODEL = "claude-3-5-sonnet-latest"

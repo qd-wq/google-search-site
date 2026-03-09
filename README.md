@@ -1,33 +1,31 @@
-# GitHub Multi-Engine Search Site
+# AI Compare Site (ChatGPT / Gemini / Claude)
 
-一个可部署到 GitHub Pages 的静态网站，支持 Google、Bing、百度三列对比搜索。
+一个基于 `GitHub Pages + 后端代理` 的对比问答网站。
 
-## 功能
+用户输入一个问题后，由代理并发请求 ChatGPT、Gemini、Claude，前端按三列展示结果。
 
-- 点击一次“开始搜索”同时加载 Google / Bing / 百度结果
-- 结果按三列展示，便于对比
-- 每列提供“新标签打开”兜底链接（当站内嵌入受限时）
-- 自适应移动端
+## 目录结构
 
-## 本地预览
+- `index.html`：GitHub Pages 前端页面
+- `vercel-proxy/`：Vercel 代理服务（推荐）
+- `proxy-worker/`：Cloudflare Worker 代理服务（可选）
 
-直接双击 `index.html` 即可。
+## 使用流程
 
-## 部署到 GitHub Pages
+1. 先部署 `vercel-proxy`（见 `vercel-proxy/README.md`）
+2. 拿到 Vercel 地址后，接口是：
+   - `https://<your-project>.vercel.app/api/compare`
+3. 打开你的 GitHub Pages 页面，把这个地址填入 `Proxy Endpoint`
+4. 输入问题并点击“开始提问”
 
-1. 在 GitHub 新建仓库（例如 `google-search-site`）。
-2. 把本目录文件推送到仓库：
+## 前端发布
 
 ```bash
 git add .
-git commit -m "feat: add multi-engine search"
+git commit -m "feat: use backend proxy for ai compare"
 git push
 ```
 
-3. 打开仓库 `Settings` -> `Pages`。
-4. `Build and deployment` 里选择：
-   - Source: `Deploy from a branch`
-   - Branch: `main` / `(root)`
-5. 保存后等待 1-3 分钟，访问页面：
+发布后页面地址仍是：
 
-`https://<你的用户名>.github.io/google-search-site/`
+`https://qd-wq.github.io/google-search-site/`
